@@ -14,7 +14,7 @@
 import WebSocketComponent from '../components/WebSocketComponent.vue'
 
 export default {
-    name: 'Home',
+    name: 'HomeView',
     components: {
         WebSocketComponent
     }

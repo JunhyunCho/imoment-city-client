@@ -9,7 +9,7 @@
             <div id="messages"></div>
         </div>
         <div id="lower-half">
-            <div id="log"></div>
+            <div id="log" ref="log"></div>
         </div>
     </div>
 </template>
@@ -21,16 +21,18 @@ export default {
         return {
             socket: null,
             userName: '',
-            nameInput: ''
+            nameInput: '',
+            logElement: null
         }
     },
     methods: {
         log(message) {
-            const now = new Date();
-            const timestamp = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
-            const logElement = document.getElementById('log');
-            logElement.innerHTML += `${timestamp} ${message}\n`;
-            logElement.scrollTop = logElement.scrollHeight;
+            if (this.logElement) {
+                this.logElement.innerHTML += message + '\n';
+                this.logElement.scrollTop = this.logElement.scrollHeight;
+            } else {
+                console.log(message);
+            }
         },
         connect() {
             this.socket = new WebSocket('https://imoment-node-server-heroku-178f19c891f3.herokuapp.com/');
@@ -71,7 +73,13 @@ export default {
         }
     },
     mounted() {
+        this.logElement = this.$refs.log;
         this.connect();
+    },
+    beforeUnmount() {
+        if (this.socket) {
+            this.socket.close();
+        }
     }
 }
 </script>
